@@ -1,0 +1,17 @@
+{
+    "name": "tinkerwellapp/drivers",
+    "description": "Possible drivers for Tinkerwell",
+    "keywords": [
+        "tinkerwell"
+    ],
+    "homepage": "https://tinkerwell.app",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Marcel Pociot",
+            "email": "marcel@beyondco.de",
+            "role": "Developer"
+        }
+    ],
+    "require": {}
+}
