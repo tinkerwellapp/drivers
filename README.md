@@ -140,6 +140,25 @@ You can specify that a project should use a custom Tinkerwell driver, even if it
 In the project directory that should contain the custom driver, create a `.tinkerwell` directory.
 In there you can create your custom Tinkerwell driver class and name it, for example, `CustomTinkerwellDriver`. Now when you open this project directory within Tinkerwell, your custom driver will be used instead of any built-in drivers.
 
+```php
+<?php
+
+use Tinkerwell\ContextMenu\SetCode;
+
+class CustomTinkerwellDriver extends LaravelTinkerwellDriver {
+
+	public function contextMenu(): array
+	{
+		return array_merge(parent::contextMenu(), [
+			SetCode::create('Find latest users', <<<EOT
+User::latest()->first()
+EOT),
+		]);
+	}
+
+}
+```
+
 ## Credits
 
 - [Marcel Pociot](https://github.com/beyondcode)
