@@ -16,11 +16,13 @@ Install the Tinkerwell application from [https://tinkerwell.app](https://tinkerw
 
 #### Anatomy of a driver
 
+> Note: The driver name needs to have `TinkerwellDriver` as a suffix. For example: `LaravelTinkerwellDriver`, `WordpressTinkerwellDriver` or `CustomTinkerwellDriver`
+
 A Tinkerwell driver is a simple class that will be called when your project gets opened in the Tinkerwell application.  
 Here is how a basic driver for Wordpress looks like:
 
 ```php
-class MyCustomDriver extends TinkerwellDriver
+class MyCustomTinkerwellDriver extends TinkerwellDriver
 {
     /**
      * Determine if the driver can be used with the selected project path.
