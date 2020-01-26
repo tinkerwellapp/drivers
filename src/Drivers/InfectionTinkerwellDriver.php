@@ -7,7 +7,8 @@ final class InfectionTinkerwellDriver extends TinkerwellDriver
 {
     public function canBootstrap($projectPath)
     {
-        return file_exists($projectPath . '/bin/infection');
+        return file_exists($projectPath . '/bin/infection') &&
+            file_exists($projectPath . '/bin/infection-debug');
     }
 
     public function bootstrap($projectPath)
