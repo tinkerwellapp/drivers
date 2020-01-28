@@ -9,7 +9,7 @@ class StatamicTinkerwellDriver extends LaravelTinkerwellDriver
 {
     public function canBootstrap($projectPath)
     {
-        return file_exists($projectPath . 'config/statamic/system.php');
+        return file_exists($projectPath . '/vendor/statamic/cms/');
     }
 
     public function contextMenu()
