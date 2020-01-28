@@ -99,6 +99,14 @@ public function contextMenu()
 
 #### Available context menu items:
 
+##### Separator
+
+A separator in the context menu.
+
+```php
+Separator::create();
+```
+
 ##### Label
 
 A simple label that displays textual information in the context menu:
