@@ -43,7 +43,14 @@ abstract class TinkerwellDriver
 
         $drivers = array_merge($drivers, static::driversIn($projectPath . DIRECTORY_SEPARATOR . '.tinkerwell'));
 
-        $drivers = array_merge($drivers, static::driversIn(__DIR__));
+        $drivers = array_merge($drivers, [
+            'InfectionTinkerwellDriver',
+            'StatamicTinkerwellDriver',
+            'KirbyTinkerwellDriver',
+            'LaravelTinkerwellDriver',
+            'OctoberCMSTinkerwellDriver',
+            'WordpressTinkerwellDriver',
+        ]);
 
         foreach ($drivers as $driver) {
             /** @var TinkerwellDriver $driver */
