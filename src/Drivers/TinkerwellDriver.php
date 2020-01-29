@@ -47,6 +47,7 @@ abstract class TinkerwellDriver
             'InfectionTinkerwellDriver',
             'StatamicTinkerwellDriver',
             'KirbyTinkerwellDriver',
+            'MoodleTinkerwellDriver',
             'LaravelTinkerwellDriver',
             'OctoberCMSTinkerwellDriver',
             'WordpressTinkerwellDriver',
