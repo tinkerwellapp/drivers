@@ -6,6 +6,7 @@ use Tinkerwell\ContextMenu\Label;
 use Tinkerwell\ContextMenu\OpenURL;
 use Tinkerwell\ContextMenu\SetCode;
 use Tinkerwell\ContextMenu\Submenu;
+use Tinkerwell\ContextMenu\Separator;
 
 class StatamicTinkerwellDriver extends LaravelTinkerwellDriver
 {
@@ -17,6 +18,8 @@ class StatamicTinkerwellDriver extends LaravelTinkerwellDriver
     public function contextMenu()
     {
         return array_merge(parent::contextMenu(), [
+            Separator::create(),
+            
             Label::create('Detected Statamic v' . Statamic::version()),
 
             Submenu::create(
