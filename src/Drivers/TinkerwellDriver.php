@@ -49,6 +49,7 @@ abstract class TinkerwellDriver
             'KirbyTinkerwellDriver',
             'MoodleTinkerwellDriver',
             'LaravelTinkerwellDriver',
+            'LumenTinkerwellDriver',
             'OctoberCMSTinkerwellDriver',
             'WordpressTinkerwellDriver',
         ]);
