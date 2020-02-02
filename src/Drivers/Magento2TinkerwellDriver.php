@@ -11,6 +11,10 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Tinkerwell\ContextMenu\Label;
 use Tinkerwell\ContextMenu\SetCode;
 use Tinkerwell\ContextMenu\Submenu;
+use TYPO3\PharStreamWrapper\Behavior;
+use TYPO3\PharStreamWrapper\Interceptor\PharMetaDataInterceptor;
+use TYPO3\PharStreamWrapper\Manager;
+use TYPO3\PharStreamWrapper\PharStreamWrapper;
 
 class Magento2TinkerwellDriver extends TinkerwellDriver
 {
@@ -36,7 +40,11 @@ class Magento2TinkerwellDriver extends TinkerwellDriver
 
     public function bootstrap($projectPath)
     {
+        Manager::initialize((new Behavior())->withAssertion(new PharMetaDataInterceptor()));
+
         require $projectPath . '/app/bootstrap.php';
+        stream_wrapper_register('phar', PharStreamWrapper::class);
+
         $bootstrap = Bootstrap::create(BP, $_SERVER);
 
         $this->objectManager = $bootstrap->getObjectManager();
