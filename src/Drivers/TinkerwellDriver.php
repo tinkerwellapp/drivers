@@ -50,6 +50,7 @@ abstract class TinkerwellDriver
             'MoodleTinkerwellDriver',
             'LaravelTinkerwellDriver',
             'LumenTinkerwellDriver',
+            'PrestaShopTinkerwellDriver',
             'OctoberCMSTinkerwellDriver',
             'WordpressTinkerwellDriver',
         ]);
