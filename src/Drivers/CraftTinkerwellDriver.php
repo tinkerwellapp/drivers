@@ -25,7 +25,23 @@ class CraftTinkerwellDriver extends TinkerwellDriver
 
         // Load dotenv?
         if (class_exists('Dotenv\Dotenv') && file_exists(CRAFT_BASE_PATH.'/.env')) {
-            Dotenv\Dotenv::create(CRAFT_BASE_PATH)->load();
+            $dotenvMajorVersion = null;
+
+            if ( file_exists(CRAFT_VENDOR_PATH.'/composer/installed.json') ) {
+                $installedPackages = json_decode(file_get_contents(CRAFT_VENDOR_PATH.'/composer/installed.json'));
+                foreach ($installedPackages as $package) {
+                    if ($package->name == 'vlucas/phpdotenv') $dotenvMajorVersion = substr($package->version,1,1);
+                }
+            }
+
+            switch ($dotenvMajorVersion) {
+                case '3':
+                    Dotenv\Dotenv::create(CRAFT_BASE_PATH)->load();
+                break;
+                case '2':
+                    (new Dotenv\Dotenv(CRAFT_BASE_PATH))->load();
+                break;
+            }
         }
 
         // Load and run Craft
