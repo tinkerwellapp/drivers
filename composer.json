@@ -13,5 +13,7 @@
             "role": "Developer"
         }
     ],
-    "require": {}
+    "require": {
+        "typo3/phar-stream-wrapper": "*"
+    }
 }
