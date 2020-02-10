@@ -5,16 +5,9 @@ use Magento\Framework\App\ProductMetadata;
 use Magento\Framework\Console\Cli;
 use Magento\Framework\Console\CommandList;
 use Magento\Framework\ObjectManagerInterface;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\BufferedOutput;
 use Tinkerwell\ContextMenu\Label;
 use Tinkerwell\ContextMenu\SetCode;
 use Tinkerwell\ContextMenu\Submenu;
-use TYPO3\PharStreamWrapper\Behavior;
-use TYPO3\PharStreamWrapper\Interceptor\PharMetaDataInterceptor;
-use TYPO3\PharStreamWrapper\Manager;
-use TYPO3\PharStreamWrapper\PharStreamWrapper;
 
 class Magento2TinkerwellDriver extends TinkerwellDriver
 {
@@ -49,8 +42,12 @@ class Magento2TinkerwellDriver extends TinkerwellDriver
 
         $this->objectManager = $bootstrap->getObjectManager();
 
-        $state = $this->objectManager->get('Magento\Framework\App\State');
-        $state->setAreaCode('frontend');
+        try {
+            $state = $this->objectManager->get('Magento\Framework\App\State');
+            $state->setAreaCode('frontend');
+        } catch (\Throwable $e) {
+            //
+        }
 
         $this->commandList = $this->objectManager->get(CommandList::class)->getCommands();
 

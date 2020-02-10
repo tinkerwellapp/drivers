@@ -49,6 +49,8 @@ abstract class TinkerwellDriver
             'KirbyTinkerwellDriver',
             'MoodleTinkerwellDriver',
             'LaravelTinkerwellDriver',
+            'CraftTinkerwellDriver',
+            'Magento2TinkerwellDriver',
             'LumenTinkerwellDriver',
             'PrestaShopTinkerwellDriver',
             'OctoberCMSTinkerwellDriver',
