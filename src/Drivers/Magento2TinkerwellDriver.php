@@ -33,10 +33,11 @@ class Magento2TinkerwellDriver extends TinkerwellDriver
 
     public function bootstrap($projectPath)
     {
-        Manager::initialize((new Behavior())->withAssertion(new PharMetaDataInterceptor()));
-
         require $projectPath . '/app/bootstrap.php';
-        stream_wrapper_register('phar', PharStreamWrapper::class);
+        // Magento 2.3.1 removes phar stream wrapper.
+        if (!in_array('phar', \stream_get_wrappers())) {
+            \stream_wrapper_restore('phar');
+        }
 
         $bootstrap = Bootstrap::create(BP, $_SERVER);
 
