@@ -10,7 +10,10 @@ class SymfonyTinkerwellDriver extends TinkerwellDriver
 {
     public function canBootstrap($projectPath)
     {
-        return file_exists($projectPath . '/public/index.php');
+        return file_exists($projectPath . '/public/index.php') &&
+            file_exists($projectPath . '/config/bootstrap.php') &&
+            file_exists($projectPath . '/symfony.lock') &&
+            file_exists($projectPath . '/bin/console');
     }
 
     public function bootstrap($projectPath)
