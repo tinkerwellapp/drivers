@@ -57,6 +57,7 @@ abstract class TinkerwellDriver
             'SymfonyTinkerwellDriver',
             'Typo3TinkerwellDriver',
             'WordpressTinkerwellDriver',
+            'KosevenTinkerwellDriver',
         ]);
 
         foreach ($drivers as $driver) {
