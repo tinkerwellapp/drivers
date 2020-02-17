@@ -60,7 +60,7 @@ class StatamicTinkerwellDriver extends LaravelTinkerwellDriver
             return Str::startsWith($class, $this->aliases);
         })->map(function ($path, $original) {
             return class_basename($original);
-        })->flip();
+        })->unique()->flip();
 
         spl_autoload_register([$this, 'aliasClass']);
     }
