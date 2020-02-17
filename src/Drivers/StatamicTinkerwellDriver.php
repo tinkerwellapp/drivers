@@ -10,6 +10,16 @@ use Tinkerwell\ContextMenu\Separator;
 
 class StatamicTinkerwellDriver extends LaravelTinkerwellDriver
 {
+    protected $aliasMap;
+    protected $aliases = ['Statamic\Facades'];
+
+    public function bootstrap($projectPath)
+    {
+        parent::bootstrap($projectPath);
+
+        $this->registerAliases($projectPath);
+    }
+
     public function canBootstrap($projectPath)
     {
         return file_exists($projectPath . '/vendor/statamic/cms');
@@ -35,5 +45,30 @@ class StatamicTinkerwellDriver extends LaravelTinkerwellDriver
 
             OpenURL::create('Documentation', Statamic::docsUrl('/')),
         ]);
+    }
+
+    protected function registerAliases($projectPath)
+    {
+        $classmap = $projectPath.'/vendor/composer/autoload_classmap.php';
+
+        $this->aliasMap = collect(require $classmap)->filter(function ($path, $class) {
+            return Str::startsWith($class, $this->aliases);
+        })->map(function ($path, $original) {
+            return class_basename($original);
+        })->flip();
+
+        spl_autoload_register([$this, 'aliasClass']);
+    }
+
+    public function aliasClass($class)
+    {
+        if (Str::contains($class, '\\')) {
+            return;
+        }
+
+        if ($fullName = $this->aliasMap[$class] ?? false) {
+            echo "[!] Aliasing '{$class}' to '{$fullName}' for this Tinker session.\n";
+            class_alias($fullName, $class);
+        }
     }
 }
