@@ -11,7 +11,12 @@ use Tinkerwell\ContextMenu\Separator;
 class StatamicTinkerwellDriver extends LaravelTinkerwellDriver
 {
     protected $aliasMap;
-    protected $aliases = ['Statamic\Facades'];
+    protected $aliases = [
+        'App\\',
+        'Statamic\Facades',
+        'Statamic\Support\Arr',
+        'Statamic\Support\Str',
+    ];
 
     public function bootstrap($projectPath)
     {
