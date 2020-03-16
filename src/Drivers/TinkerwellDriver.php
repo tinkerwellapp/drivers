@@ -55,6 +55,7 @@ abstract class TinkerwellDriver
             'PrestaShopTinkerwellDriver',
             'OctoberCMSTinkerwellDriver',
             'SymfonyTinkerwellDriver',
+            'Typo3TinkerwellDriver',
             'WordpressTinkerwellDriver',
         ]);
 
