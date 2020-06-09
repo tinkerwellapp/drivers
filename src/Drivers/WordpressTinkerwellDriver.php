@@ -25,7 +25,7 @@ class WordpressTinkerwellDriver extends TinkerwellDriver
     public function contextMenu()
     {
         return [
-            Label::create('Detected Wordpress v' . bloginfo('version')),
+            Label::create('Detected Wordpress v' . get_bloginfo('version')),
         ];
     }
 }
