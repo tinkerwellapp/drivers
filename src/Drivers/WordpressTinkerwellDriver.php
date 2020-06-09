@@ -15,17 +15,17 @@ class WordpressTinkerwellDriver extends TinkerwellDriver
         require $projectPath . '/wp-load.php';
     }
 
-    public function getAvailableVariables()
+    public function getAvailableVariables() : array
     {
         return [
             '__blog' => get_bloginfo()
         ];
     }
 
-    public function contextMenu()
+    public function contextMenu() : array
     {
         return [
-            Label::create('Detected Wordpress v' . bloginfo('version')),
+            Label::create('Detected Wordpress v' . get_bloginfo('version')),
         ];
     }
 }
