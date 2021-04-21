@@ -1,0 +1,29 @@
+<?php
+
+use Tinkerwell\ContextMenu\Label;
+use Tinkerwell\ContextMenu\OpenURL;
+use Tinkerwell\ContextMenu\Separator;
+
+class Ips4TinkerwellDriver extends TinkerwellDriver
+{
+
+	public function canBootstrap($projectPath)
+	{
+		return file_exists($projectPath . '/conf_global.php') AND file_exists( $projectPath . '/init.php');
+	}
+
+	public function bootstrap($projectPath)
+	{
+		require $projectPath . '/init.php';
+	}
+
+	public function contextMenu()
+	{
+		return array_merge(parent::contextMenu(), [
+			Separator::create(),
+			Label::create('IPS4'),
+			OpenURL::create('Documentation', 'https://invisioncommunity.com'),
+			OpenURL::create('Local Dev Site', \IPS\Settings::i()->base_url),
+		]);
+	}
+}
