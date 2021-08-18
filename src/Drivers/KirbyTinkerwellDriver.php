@@ -12,8 +12,11 @@ class KirbyTinkerwellDriver extends TinkerwellDriver
 
     public function bootstrap($projectPath)
     {
-        require $projectPath . '/kirby/bootstrap.php';
-        (new Kirby)->render();
+        if (file_exists($publicIndexFile = $projectPath . '/public/index.php')) {
+            require $publicIndexFile;
+        } else {
+            require $projectPath . '/index.php';
+        }
     }
 
     public function getAvailableVariables()
