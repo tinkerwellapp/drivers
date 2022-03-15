@@ -15,7 +15,7 @@ class LaravelTinkerwellDriver extends TinkerwellDriver
 
     public function bootstrap($projectPath)
     {
-        require_once $projectPath . '/vendor/autoload.php';
+        require_once $projectPath . '/bootstrap/autoload.php';
 
         $app = require_once $projectPath . '/bootstrap/app.php';
 
