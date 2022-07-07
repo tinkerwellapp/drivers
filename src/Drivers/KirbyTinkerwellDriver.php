@@ -12,6 +12,8 @@ class KirbyTinkerwellDriver extends TinkerwellDriver
 
     public function bootstrap($projectPath)
     {
+	define('KIRBY_HELPER_DUMP', false);
+
         require $projectPath . '/kirby/bootstrap.php';
         (new Kirby)->render();
     }
