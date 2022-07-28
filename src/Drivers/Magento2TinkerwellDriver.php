@@ -1,9 +1,11 @@
 <?php
 
+use Magento\Framework\App;
 use Magento\Framework\App\Bootstrap;
 use Magento\Framework\App\ProductMetadata;
 use Magento\Framework\Console\Cli;
 use Magento\Framework\Console\CommandList;
+use Magento\Framework\ObjectManager\ConfigLoaderInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Tinkerwell\ContextMenu\Label;
 use Tinkerwell\ContextMenu\SetCode;
@@ -28,7 +30,7 @@ class Magento2TinkerwellDriver extends TinkerwellDriver
 
     public function canBootstrap($projectPath): bool
     {
-        return file_exists($projectPath . '/bin/magento');
+        return file_exists($projectPath . '/app/etc/env.php');
     }
 
     public function bootstrap($projectPath)
@@ -43,13 +45,6 @@ class Magento2TinkerwellDriver extends TinkerwellDriver
 
         $this->objectManager = $bootstrap->getObjectManager();
 
-        try {
-            $state = $this->objectManager->get('Magento\Framework\App\State');
-            $state->setAreaCode('frontend');
-        } catch (\Throwable $e) {
-            //
-        }
-
         $this->commandList = $this->objectManager->get(CommandList::class)->getCommands();
 
         usort($this->commandList, function ($a, $b) {
@@ -59,20 +54,26 @@ class Magento2TinkerwellDriver extends TinkerwellDriver
         $this->version = $this->objectManager->get(ProductMetadata::class)->getVersion();
     }
 
-    public function contextMenu()
+    public function getAvailableVariables()
     {
         return [
-            Label::create('Detected Magento v' . $this->version),
-            SetCode::create('Cache flush', '$runCliCommand(\'cache:flush\');'),
-            Submenu::create('CLI', $this->cliSubmenu()),
-        ];
-    }
+            'om' => App\ObjectManager::getInstance(),
+            'tw' => new class()
+            {
+                public function loadArea(string $area): void
+                {
+                    $om           = App\ObjectManager::getInstance();
+                    $appState     = $om->get(App\State::class);
+                    $configLoader = $om->get(ConfigLoaderInterface::class);
+                    $areaList     = $om->get(App\AreaList::class);
 
-    public function getAvailableVariables(): array
-    {
-        return [
-            'objectManager' => $this->objectManager,
-            'runCliCommand' => $this->getCliCommandFunction(),
+                    $appState->setAreaCode($area);
+                    $om->configure($configLoader->load($area));
+                    $areaList->getArea($area)
+                        ->load(App\Area::PART_CONFIG)
+                        ->load(App\Area::PART_TRANSLATE);
+                }
+            },
         ];
     }
 
