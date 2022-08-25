@@ -22,7 +22,7 @@ class SymfonyTinkerwellDriver extends TinkerwellDriver
     {
         require_once $projectPath.'/vendor/autoload.php';
 
-        (new Dotenv())->bootEnv(dirname(__DIR__).'/.env');
+        (new Dotenv())->bootEnv($projectPath.'/.env');
 
         $this->kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
         $this->kernel->boot();
