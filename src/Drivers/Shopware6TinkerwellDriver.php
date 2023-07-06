@@ -1,12 +1,15 @@
 <?php
 
 use Composer\InstalledVersions;
-use Shopware\Core\DevOps\Environment\EnvironmentHelper;
-use Shopware\Core\Framework\Plugin\KernelPluginLoader\ComposerPluginLoader;
+use Shopware\Core\Framework\DataAbstractionLayer\DefinitionInstanceRegistry;
 use Shopware\Core\Framework\Plugin\KernelPluginLoader\DbalKernelPluginLoader;
-use Shopware\Core\Framework\Plugin\KernelPluginLoader\StaticKernelPluginLoader;
-use Shopware\Production\Kernel;
+use Shopware\Core\Kernel as CoreKernel;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Dotenv\Dotenv;
+use Tinkerwell\ContextMenu\Label;
+use Tinkerwell\ContextMenu\Submenu;
+use Tinkerwell\ContextMenu\SetCode;
+use Tinkerwell\ContextMenu\OpenURL;
 
 class Shopware6TinkerwellDriver extends TinkerwellDriver
 {
@@ -18,13 +21,22 @@ class Shopware6TinkerwellDriver extends TinkerwellDriver
      */
     protected $version;
 
+    /**
+     * @var string
+     */
+    protected $appEnv;
+
     public function canBootstrap($projectPath): bool
     {
-        return file_exists($projectPath . '/bin/build-storefront.sh') &&
-            file_exists($projectPath . '/install.lock');
+        return file_exists($projectPath . '/symfony.lock') &&
+            (
+                file_exists($projectPath . '/src/Core/Framework/ShopwareHttpException.php') || # platform repo direct
+                file_exists($projectPath . '/vendor/shopware/platform/src/Core/Framework/ShopwareHttpException.php') || # platform repo as composer dep
+                file_exists($projectPath . '/vendor/shopware/core/Framework/ShopwareHttpException.php') # platform repo as split in composer
+            );
     }
 
-    public function bootstrap($projectPath)
+    public function bootstrap($projectPath): void
     {
         $classLoader = require $projectPath . '/vendor/autoload.php';
 
@@ -33,35 +45,66 @@ class Shopware6TinkerwellDriver extends TinkerwellDriver
             (new Dotenv())->usePutenv()->setProdEnvs(['prod', 'e2e'])->bootEnv($projectRoot . '/.env');
         }
 
-        if (!EnvironmentHelper::hasVariable('PROJECT_ROOT')) {
-            $_SERVER['PROJECT_ROOT'] = $projectRoot;
+        $this->version = InstalledVersions::getVersion('shopware/core');
+
+        if ($this->version === null) {
+            $this->version = InstalledVersions::getVersion('shopware/platform');
         }
 
-        $pluginLoader = new StaticKernelPluginLoader($classLoader, null);
+        $this->appEnv = $_SERVER['APP_ENV'] ?? 'prod';
 
-        $this->Version = InstalledVersions::getVersion('shopware/core') . '@' . InstalledVersions::getReference('shopware/core');
+        $pluginLoader = new DbalKernelPluginLoader($classLoader, null, CoreKernel::getConnection());
 
-        $pluginLoader = new DbalKernelPluginLoader($classLoader, null, \Shopware\Core\Kernel::getConnection());
+        define('PROJECT_ROOT', $projectRoot);
 
-        if ($_SERVER['COMPOSER_PLUGIN_LOADER'] ?? $_SERVER['DISABLE_EXTENSIONS'] ?? false) {
-            $pluginLoader = new ComposerPluginLoader($classLoader);
-        }
+        $this->kernel = new class($this->appEnv, true, $pluginLoader, 'cache-id') extends CoreKernel {
+            public function getProjectDir(): string
+            {
+                return PROJECT_ROOT;
+            }
 
-        $env = $_SERVER['APP_ENV'] ?? 'prod';
-        $debug = $_SERVER['APP_DEBUG'] ?? ($env !== 'prod');
+            protected function buildContainer(): ContainerBuilder
+            {
+                $container =  parent::buildContainer();
 
-        $this->kernel = new Kernel($env, $debug, $pluginLoader);
+                foreach ($container->getDefinitions() as $definition) {
+                    $definition->setPublic(true);
+                }
+
+                return $container;
+            }
+        };
 
         $this->kernel->boot();
 
         $this->container = $this->kernel->getContainer();
     }
 
-    public function getAvailableVariables()
+    public function getAvailableVariables(): array
     {
         return [
             'kernel' => $this->kernel,
             'container' => $this->container,
+            'definitions' => $this->container->get(DefinitionInstanceRegistry::class),
+        ];
+    }
+
+    public function contextMenu()
+    {
+        return [
+            Label::create('Detected Shopware ' . $this->version. ', ' . 'APP_ENV='. $this->appEnv . ', APP_DEBUG=1'),
+
+            Submenu::create('Snippets', [
+                SetCode::create('Fetch all products', <<<'PHP'
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\Context;
+
+$products = $container->get('product.repository')->search(new Criteria(), Context::createDefaultContext());
+$products->first();
+PHP),
+            ]),
+
+            OpenURL::create('Documentation', 'https://developer.shopware.com'),
         ];
     }
 }
