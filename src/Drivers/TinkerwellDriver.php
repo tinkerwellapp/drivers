@@ -96,4 +96,14 @@ abstract class TinkerwellDriver
         }
         return $drivers;
     }
+
+    /**
+     * Override the global setting for enabling collision output.
+     *
+     * @return bool|null
+     */
+    public function usesCollision() {
+        return null;
+    }
+
 }

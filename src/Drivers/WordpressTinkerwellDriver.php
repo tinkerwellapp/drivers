@@ -28,4 +28,9 @@ class WordpressTinkerwellDriver extends TinkerwellDriver
             Label::create('Detected Wordpress v' . get_bloginfo('version')),
         ];
     }
+
+    public function usesCollision()
+    {
+        return false;
+    }
 }
