@@ -6,15 +6,14 @@ use Tinkerwell\ContextMenu\Separator;
 
 class Ips4TinkerwellDriver extends TinkerwellDriver
 {
-
 	public function canBootstrap($projectPath)
 	{
-		return file_exists($projectPath . '/conf_global.php') AND file_exists( $projectPath . '/init.php');
+		return file_exists($projectPath . '/applications/core/data/application.json');
 	}
 
 	public function bootstrap($projectPath)
 	{
-		require $projectPath . '/init.php';
+		require_once $projectPath . '/init.php';
 	}
 
 	public function contextMenu()
